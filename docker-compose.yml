@@ -1,0 +1,32 @@
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: userservice_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: userservice
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  adminer_backend:
+    image: michalhosna/adminer
+    ports:
+      - "8098:8080"
+    depends_on:
+      - postgres
+    environment:
+      ADMINER_DB: "${DB_DATABASE:-app}"
+      ADMINER_PASSWORD: "${DB_PASSWORD:-secret}"
+      ADMINER_SERVER: "${DB_HOST:-mysql}"
+      ADMINER_USERNAME: "${DB_USERNAME:-app}"
+      ADMINER_AUTOLOGIN: 1
+    container_name: user_service_adm
+
+
+volumes:
+  pgdata:
