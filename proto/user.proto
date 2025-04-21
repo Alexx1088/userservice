@@ -2,12 +2,29 @@ syntax = "proto3";
 
 package user;
 
-option go_package = "/user;user";
+option go_package = "userservice/proto;user";
+
+import "googleapis/google/api/annotations.proto";
 
 service UserService {
-  rpc CreateUser(CreateUserRequest) returns (UserResponse);
-  rpc GetUserById(GetUserRequest) returns (UserResponse);
-  rpc UpdateUserScore(UpdateUserScoreRequest) returns (UserResponse);
+  rpc CreateUser(CreateUserRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      post: "/v1/users"
+      body: "*"
+    };
+  }
+
+  rpc GetUserById(GetUserRequest) returns (UserResponse){
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}"
+    };
+  }
+  rpc UpdateUserScore(UpdateUserScoreRequest) returns (UserResponse){
+    option (google.api.http) = {
+      patch: "/v1/users/{user_id}/score"
+      body: "*"
+    };
+  }
 }
 
 message CreateUserRequest {
