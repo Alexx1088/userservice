@@ -1,14 +1,14 @@
 package main
 
 import (
+	"github.com/Alexx1088/userservice/internal/db"
+	"github.com/Alexx1088/userservice/internal/repository"
+	"github.com/Alexx1088/userservice/internal/service"
+	pb "github.com/Alexx1088/userservice/pb/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
-	"userservice/internal/db"
-	"userservice/internal/repository"
-	"userservice/internal/service"
-	pb "userservice/pb/user"
 )
 
 func main() {
