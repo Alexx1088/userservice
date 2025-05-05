@@ -2,7 +2,8 @@ syntax = "proto3";
 
 package user;
 
-option go_package = "userservice/proto;user";
+//option go_package = "userservice/proto;user";
+option go_package = "github.com/Alexx1088/userservice/proto;userpb";
 
 import "googleapis/google/api/annotations.proto";
 
