@@ -11,11 +11,10 @@ func main() {
 	if err := db.Connect(); err != nil {
 		log.Fatalf("DB connection failed: %v", err)
 	}
-	defer db.Pool.Close()
+	defer db.DB.Close()
 
-	migrationsPath := "file://migrations"
-
-	if err := migrate.RunMigrations(db.Pool, migrationsPath); err != nil {
+	migrationsPath := "migrations"
+	if err := migrate.RunMigrations(db.DB.DB, migrationsPath); err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}
 

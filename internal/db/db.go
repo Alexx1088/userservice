@@ -1,31 +1,37 @@
 package db
 
 import (
-	"context"
-	"fmt"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
+	"errors"
 	"log"
 	"os"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/joho/godotenv"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var Pool *pgxpool.Pool
+var DB *sqlx.DB
 
 func Connect() error {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("No .env file found or failed to load")
+	// Load .env file
+	if err := godotenv.Load(); err != nil {
+		log.Println("⚠️ .env file not found, relying on system env")
 	}
 
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
-	sslmode := os.Getenv("DB_SSLMODE")
+	// Read DSN from environment
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		return errors.New("DATABASE_URL is not set")
+	}
 
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, sslmode)
+	// Connect to PostgreSQL using pgx driver
+	db, err := sqlx.Connect("pgx", dsn)
+	if err != nil {
+		return err
+	}
 
-	Pool, err = pgxpool.New(context.Background(), connStr)
-	return err
+	// Assign to global variable
+	DB = db
+	return nil
 }

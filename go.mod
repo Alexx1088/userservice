@@ -8,7 +8,6 @@ require (
 	github.com/jackc/pgx/v5 v5.7.4
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
-	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.24.2
 	google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb
 	google.golang.org/grpc v1.72.0
