@@ -21,6 +21,7 @@ service UserService {
       body: "*"
     };
   }
+
 }
 
 message CreateUserRequest {
