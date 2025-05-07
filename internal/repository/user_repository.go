@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"userservice/internal/model"
+	"github.com/Alexx1088/userservice/internal/model"
 )
 
 type UserRepository interface {

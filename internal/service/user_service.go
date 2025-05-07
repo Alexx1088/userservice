@@ -2,13 +2,13 @@ package service
 
 import (
 	"context"
+	"github.com/Alexx1088/userservice/internal/model"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"userservice/internal/model"
 
+	"github.com/Alexx1088/userservice/internal/repository"
+	pb "github.com/Alexx1088/userservice/pb/user"
 	"github.com/google/uuid"
-	"userservice/internal/repository"
-	pb "userservice/pb/user"
 )
 
 type UserService struct {
@@ -19,11 +19,10 @@ type UserService struct {
 func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.UserResponse, error) {
 	id := uuid.New().String()
 	user := &model.User{
-		ID:       id,
-		Name:     req.GetName(),
-		Email:    req.GetEmail(),
-		Password: req.GetPassword(),
-		Score:    0,
+		ID:    id,
+		Name:  req.GetName(),
+		Email: req.GetEmail(),
+		Score: 0,
 	}
 
 	if err := s.Repo.Create(ctx, user); err != nil {

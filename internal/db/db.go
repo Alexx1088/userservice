@@ -1,37 +1,26 @@
 package db
 
 import (
-	"errors"
+	"context"
 	"log"
 	"os"
 
-	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
-
-	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var DB *sqlx.DB
+var Pool *pgxpool.Pool
 
-func Connect() error {
-	// Load .env file
-	if err := godotenv.Load(); err != nil {
-		log.Println("⚠️ .env file not found, relying on system env")
-	}
-
-	// Read DSN from environment
-	dsn := os.Getenv("DATABASE_URL")
+func Init() {
+	dsn := os.Getenv("DATABASE_URL") // Лучше брать из .env
 	if dsn == "" {
-		return errors.New("DATABASE_URL is not set")
+		log.Fatal("DATABASE_URL is not set")
 	}
 
-	// Connect to PostgreSQL using pgx driver
-	db, err := sqlx.Connect("pgx", dsn)
+	var err error
+	Pool, err = pgxpool.New(context.Background(), dsn)
 	if err != nil {
-		return err
+		log.Fatalf("failed to connect to DB: %v", err)
 	}
 
-	// Assign to global variable
-	DB = db
-	return nil
+	log.Println("Connected to DB")
 }

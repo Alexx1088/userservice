@@ -2,10 +2,10 @@ package repository
 
 import (
 	"context"
-	"userservice/internal/db"
+	"github.com/Alexx1088/userservice/internal/db"
 
+	"github.com/Alexx1088/userservice/internal/model"
 	"github.com/jackc/pgx/v5"
-	"userservice/internal/model"
 )
 
 type PgUserRepository struct{}
@@ -13,7 +13,7 @@ type PgUserRepository struct{}
 func (r *PgUserRepository) Create(ctx context.Context, user *model.User) error {
 	_, err := db.Pool.Exec(ctx,
 		"INSERT INTO users (id, name, email, password, score) VALUES ($1, $2, $3, $4, $5)",
-		user.ID, user.Name, user.Email, user.Password, user.Score)
+		user.ID, user.Name, user.Email, user.Score)
 	return err
 }
 
@@ -22,7 +22,7 @@ func (r *PgUserRepository) GetByID(ctx context.Context, id string) (*model.User,
 		"SELECT id, name, email, password, score FROM users WHERE id = $1", id)
 
 	var user model.User
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Score)
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Score)
 	if err == pgx.ErrNoRows {
 		return nil, nil
 	}

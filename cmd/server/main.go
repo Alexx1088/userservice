@@ -5,6 +5,7 @@ import (
 	"github.com/Alexx1088/userservice/internal/repository"
 	"github.com/Alexx1088/userservice/internal/service"
 	pb "github.com/Alexx1088/userservice/pb/user"
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -13,9 +14,12 @@ import (
 
 func main() {
 
-	if err := db.Connect(); err != nil {
-		log.Fatalf("failed to connect to DB: %v", err)
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found")
 	}
+
+	db.Init()
 	defer db.Pool.Close()
 
 	lis, err := net.Listen("tcp", ":50051")
