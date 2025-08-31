@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	pb "userservice/pb/user"
+	pb "github.com/Alexx1088/userservice/pb/user"
 )
 
 func main() {

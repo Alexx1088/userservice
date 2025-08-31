@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE TABLE users (
                        id UUID PRIMARY KEY,
                        name TEXT NOT NULL,
@@ -6,3 +7,6 @@ CREATE TABLE users (
                        password TEXT NOT NULL,
                        score INTEGER DEFAULT 0
 );
+
+-- +goose Down
+DROP TABLE users;

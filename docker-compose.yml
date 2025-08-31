@@ -1,17 +1,64 @@
-
 services:
+  userservice:
+    build: .
+    ports:
+      - "50052:50052"
+    volumes:
+      - .env:/app/.env
+    env_file:
+      - .env
+    networks:
+      - microservice-net
+    depends_on:
+      - postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -h postgres -U user" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - DB_HOST=userservice_postgres_1
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=userservice
+      - KAFKA_BROKERS=kafka:9092
+
+  userservice-migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+    entrypoint: [ "/app/migrate" ]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgres://user:password@postgres:5432/authservice?sslmode=disable
+    volumes:
+      - ./migrations:/app/migrations
+      - ./.env:/app/.env
+    networks:
+      - microservice-net
+
   postgres:
     image: postgres:14
-    container_name: userservice_db
     restart: always
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: userservice
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - microservice-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d userservice" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    container_name: userservice_postgres_1
 
   adminer_backend:
     image: michalhosna/adminer
@@ -20,13 +67,18 @@ services:
     depends_on:
       - postgres
     environment:
-      ADMINER_DB: "${DB_DATABASE:-app}"
-      ADMINER_PASSWORD: "${DB_PASSWORD:-secret}"
-      ADMINER_SERVER: "${DB_HOST:-mysql}"
-      ADMINER_USERNAME: "${DB_USERNAME:-app}"
+      ADMINER_DB: userservice
+      ADMINER_PASSWORD: password
+      ADMINER_SERVER: userservice_postgres_1
+      ADMINER_USERNAME: user
       ADMINER_AUTOLOGIN: 1
     container_name: user_service_adm
+    networks:
+      - microservice-net
 
 
 volumes:
   pgdata:
+networks:
+  microservice-net:
+    external: true

@@ -13,8 +13,8 @@ func main() {
 	}
 	defer db.DB.Close()
 
-	migrationsPath := "migrations"
-	if err := migrate.RunMigrations(db.DB.DB, migrationsPath); err != nil {
+	migrationsPath := "/app/migrations"
+	if err := migrate.RunMigrations(db.DB, migrationsPath); err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}
 
